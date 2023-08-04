@@ -14,6 +14,9 @@ import { defaultColumns } from "./components/data-table/Columns";
 import { getColumnOrder } from "./utils/ColumnOrderUtils";
 import styled from "styled-components";
 
+const ButtonSectionContainer = styled.div`
+    margin-bottom: 8px;
+`;
 const ButtonContainer = styled.div`
     display: flex;
     justify-content: center;
@@ -98,16 +101,18 @@ function App() {
         <>
             {isLoading && <CircularProgress size={60} />}
             {!isLoading && data.length > 0 && (
-                <div>
-                    <ButtonContainer>
-                        {loggedIn && "Logged in"} {!loggedIn && <button onClick={login}>Login</button>}
-                        {loggedIn && <button onClick={logout}>Logout</button>}
-                        {loggedIn && <button onClick={save}>Save</button>}
-                        {loggedIn && <button onClick={reload}>Reload</button>}
-                    </ButtonContainer>
-                    {message && <div>{message}</div>}
+                <>
+                    <ButtonSectionContainer>
+                        <ButtonContainer>
+                            {loggedIn && "Logged in"} {!loggedIn && <button onClick={login}>Login</button>}
+                            {loggedIn && <button onClick={logout}>Logout</button>}
+                            {loggedIn && <button onClick={save}>Save</button>}
+                            {loggedIn && <button onClick={reload}>Reload</button>}
+                        </ButtonContainer>
+                        {message && <div>{message}</div>}
+                    </ButtonSectionContainer>
                     <DataTable table={table} />
-                </div>
+                </>
             )}
         </>
     );

@@ -16,6 +16,7 @@ import styled from "styled-components";
 
 const ButtonSectionContainer = styled.div`
     margin-bottom: 8px;
+    height: 48px;
 `;
 const ButtonContainer = styled.div`
     display: flex;

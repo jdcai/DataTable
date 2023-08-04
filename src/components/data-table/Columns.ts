@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { User } from "./types/User";
+import { User } from "../../types/User";
 import moment from "moment";
 
 const getDaysSince = (date: Date) => {

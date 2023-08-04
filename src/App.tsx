@@ -10,13 +10,13 @@ import {
 import { getUsers, loginUser, logoutUser, saveUserColumns } from "./services/UserService";
 import { CircularProgress } from "@mui/material";
 import DataTable from "./components/data-table/DataTable";
-import { defaultColumns } from "./Constants";
+import { defaultColumns } from "./components/data-table/Columns";
 import { getColumnOrder } from "./utils/ColumnOrderUtils";
 import styled from "styled-components";
 
 const ButtonContainer = styled.div`
     display: flex;
-    justify-items: center;
+    justify-content: center;
     column-gap: 8px;
 `;
 
@@ -39,6 +39,19 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
 
+    const table = useReactTable({
+        data,
+        columns,
+        state: {
+            columnOrder,
+            sorting,
+        },
+        onSortingChange: setSorting,
+        onColumnOrderChange: setColumnOrder,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+    });
+
     const login = () => {
         loginUser();
         setLoggedIn(true);
@@ -53,16 +66,12 @@ function App() {
 
     const reset = () => {
         setMessage("");
+        table.resetSorting();
     };
 
-    // Remove this
     const save = () => {
-        if (columnOrder.join() !== getColumnOrder(defaultColumns).join()) {
-            saveUserColumns(columnOrder.join());
-            setMessage("Column order has been saved.");
-        } else {
-            setMessage("Columns are in default order and will not be saved.");
-        }
+        saveUserColumns(columnOrder.join());
+        setMessage("Column order has been saved.");
     };
 
     const reload = () => {
@@ -70,9 +79,6 @@ function App() {
         reset();
     };
 
-    useEffect(() => {
-        setColumnOrder(getInitialColumnOrder());
-    }, [loggedIn]);
     useEffect(() => {
         const callGetUsers = async () => {
             setIsLoading(true);
@@ -84,18 +90,9 @@ function App() {
         callGetUsers();
     }, []);
 
-    const table = useReactTable({
-        data,
-        columns,
-        state: {
-            columnOrder,
-            sorting,
-        },
-        onSortingChange: setSorting,
-        onColumnOrderChange: setColumnOrder,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-    });
+    useEffect(() => {
+        setColumnOrder(getInitialColumnOrder());
+    }, [loggedIn]);
 
     return (
         <>

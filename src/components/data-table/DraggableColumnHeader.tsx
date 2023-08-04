@@ -1,5 +1,5 @@
 import { ColumnOrderState, Header, Table, Column, flexRender } from "@tanstack/react-table";
-import { useRef } from "react";
+import { KeyboardEvent, useRef } from "react";
 import { useDrop, useDrag } from "react-dnd";
 import { User } from "../../types/User";
 import styled from "styled-components";
@@ -8,7 +8,8 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 interface SortProps {
     $sortDirection: string | boolean;
 }
-const StyledArrow = styled(ArrowDownwardIcon)`
+
+const StyledArrow = styled(ArrowDownwardIcon)<SortProps>`
     opacity: ${(props: SortProps) => (props.$sortDirection === false ? 0 : 1)};
     transform: ${(props: SortProps) => (props.$sortDirection === "desc" ? "rotate(0deg)" : "rotate(180deg)")};
 `;
@@ -25,11 +26,13 @@ const SortableHeaderSection = styled.div<SortProps>`
 
 interface StyledTableHeaderProps {
     isDragging: boolean;
+    isOver: boolean;
 }
 
 const StyledTableHeader = styled.th`
     opacity: ${(props: StyledTableHeaderProps) => (props.isDragging === true ? 0.5 : 1)};
-    cursor: "move";
+    background-color: ${(props: StyledTableHeaderProps) => (props.isOver === true ? "#ffffff14" : "initial")};
+    cursor: move;
 `;
 
 interface DraggableColumnHeaderProps {
@@ -52,12 +55,15 @@ const DraggableColumnHeader = ({ header, table }: DraggableColumnHeaderProps) =>
     const { column } = header;
     const ref = useRef(null);
 
-    const [, dropRef] = useDrop({
+    const [{ isOver }, dropRef] = useDrop({
         accept: "column",
         drop: (draggedColumn: Column<User>) => {
             const newColumnOrder = reorderColumn(draggedColumn.id, column.id, columnOrder);
             setColumnOrder(newColumnOrder);
         },
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+        }),
     });
 
     const [{ isDragging }, dragRef] = useDrag({
@@ -70,14 +76,33 @@ const DraggableColumnHeader = ({ header, table }: DraggableColumnHeaderProps) =>
 
     dragRef(dropRef(ref));
 
+    const getSortIconTitle = () => {
+        return (
+            {
+                asc: "Ascending",
+                desc: "Descending",
+            }[header.column.getIsSorted() as string] ?? "Sort"
+        );
+    };
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        console.log(event.key);
+        if (event.key === "Enter" || event.key === " ") {
+            header.column.toggleSorting();
+            event.preventDefault();
+        }
+    };
+
     return (
-        <StyledTableHeader ref={ref} colSpan={header.colSpan} isDragging={isDragging}>
+        <StyledTableHeader ref={ref} colSpan={header.colSpan} isDragging={isDragging} isOver={isOver}>
             <SortableHeaderSection
+                role="button"
+                tabIndex={0}
                 $sortDirection={header.column.getIsSorted()}
                 onClick={header.column.getToggleSortingHandler()}
+                onKeyDown={handleKeyDown}
             >
                 {flexRender(header.column.columnDef.header, header.getContext())}
-                <StyledArrow $sortDirection={header.column.getIsSorted()} />
+                <StyledArrow titleAccess={getSortIconTitle()} $sortDirection={header.column.getIsSorted()} />
             </SortableHeaderSection>
         </StyledTableHeader>
     );

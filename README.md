@@ -1,6 +1,7 @@
 # DataTable
 
 To run project locally, save the repo locally and run `yarn` to install packages and then run `yarn start` to start it.
+
 If you don't have `yarn` you can install it from https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable
 
 Vite will give the URL to go to to view the project. In this case http://127.0.0.1:5173/

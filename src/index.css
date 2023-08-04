@@ -1,0 +1,27 @@
+#root {
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+body {
+    display: flex;
+    margin: 0px;
+    color: #fff;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+    background-color: #121212;
+}
+
+table {
+    border-spacing: 0;
+}
+
+th,
+td {
+    padding: 16px;
+    border-bottom: 1px solid lightgray;
+}
